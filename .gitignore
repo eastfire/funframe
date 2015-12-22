@@ -1,0 +1,8 @@
+raw
+simulator
+public/android
+.idea
+frameworks
+*.swp
+*/*.swp
+

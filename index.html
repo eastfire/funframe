@@ -1,0 +1,121 @@
+<html>
+<head>
+    <title>画话接力</title>
+    <meta name="description" content="画话接力">
+    <link href="css/bootstrap.css" rel='stylesheet'/>
+    <link href="css/app.css" rel='stylesheet'/>
+
+
+</head>
+<body>
+    <section id="login-page" class="game-page">
+        <div class="input-group">
+            <span class="input-group-addon glyphicon glyphicon-user"></span>
+            <input type="text" class="form-control" placeholder="昵称" id='user-name'/>
+        </div>
+        <div>本系统没有用户系统，请任意输入昵称即可</div>
+        <button type="button" class="btn btn-default" id='login'>登录</button>
+    </section>
+
+    <script src="js/vender/jquery-2.1.1.min.js"></script>
+    <script src="js/vender/underscore-min.js"></script>
+    <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+    <script src="js/questions.js"></script>
+    <script src="src/vender/hammer.min.js"></script>
+    <script src="src/vender/jquery.hammer.min.js"></script>
+    <script src="js/app.js"></script>
+
+    <div id="notification"></div>
+
+    <section id="loading-page" class="game-page">
+
+    </section>
+
+    <section id="question-page" class="game-page">
+        <div>
+        <label class="question-title">我来出题</label>
+            <select id="difficulty-select">
+                <option class="difficulty" value="1">简单</option>
+                <option class="difficulty" value="2">普通</option>
+                <option class="difficulty" value="3">困难</option>
+                <option class="difficulty" value="4">疯狂</option>
+                <option class="difficulty" value="0">自选</option>
+            </select>
+        </div>
+        <div><input class="" id="question-input"/></div>
+        <div>
+            <label class="length-title">接力长度：</label>
+            <select id="length-select">
+                <option class="length-option" value="5">5</option>
+                <option class="length-option" value="6">6</option>
+                <option class="length-option" value="7">7</option>
+                <option class="length-option" value="8">8</option>
+                <option class="length-option" value="9">9</option>
+                <option class="length-option" value="10">10</option>
+                <option class="length-option" value="11">11</option>
+                <option class="length-option" value="12">12</option>
+                <option class="length-option" value="13">13</option>
+                <option class="length-option" value="14">14</option>
+                <option class="length-option" value="15">15</option>
+                <option class="length-option" value="16">16</option>
+                <option class="length-option" value="17">17</option>
+                <option class="length-option" value="18">18</option>
+                <option class="length-option" value="19">19</option>
+            </select>
+        </div>
+        <button type="button" class="btn btn-default" id='submit-question'>确定</button>
+    </section>
+
+    <section id="write-page" class="game-page">
+		<span>
+			<label>猜猜这是啥？</label>
+			<input id='drawing-name'/>
+			<button id='ok-guess' class='btn btn-primary' type='button'>确定</button>
+		</span>
+    </section>
+
+
+
+
+
+    <section id="view-page" class="game-page">
+
+    </section>
+
+
+    <section id="draw-page" class="game-page">
+        <div>
+            <div class="question">
+                <div class="user">
+                    <img class="user-portrait"/>
+                    <div class="nickname"></div>
+                </div>
+                <label class="question-label"></label>
+            </div>
+            <div style=''>
+                <canvas id='drawing-canvas' width='480' height='480' style=''>
+                </canvas>
+                <div id='canvas-bar'>
+                    <div id='tools' class="btn-group" data-toggle="buttons">
+                        <label class="btn btn-primary" id="pen1" pen="1">
+                            <input type="radio" name="options">画笔1
+                        </label>
+                        <label class="btn btn-primary active" id="pen3" pen="3">
+                            <input type="radio" name="options">画笔2
+                        </label>
+                        <label class="btn btn-primary" id="pen5" pen="5">
+                            <input type="radio" name="options">画笔3
+                        </label>
+                        <label class="btn btn-primary" id="rubber5">
+                            <input type="radio" name="options">橡皮
+                        </label>
+                    </div>
+                    <button class="btn btn-danger" id="clear-all">清除所有</button>
+                    <button id='ok-draw' class='btn btn-primary'>确定</button>
+                </div>
+                <div id='drawing-to-guess' style='display:none;'/>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
