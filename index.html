@@ -43,7 +43,7 @@
                 <option class="difficulty" value="0">自选</option>
             </select>
         </div>
-        <div><input class="" id="question-input"/></div>
+        <div><input class="" id="question-input" style="display: none"/></div>
         <div>
             <label class="length-title">接力长度：</label>
             <select id="length-select">
@@ -72,9 +72,11 @@
         <div class="drawing-block">
         </div>
 		<span>
-			<label>猜猜这是神马？</label>
-			<input id='drawing-name'/>
-			<button id='submit-writing' class='btn btn-primary' type='button'>确定</button>
+			<div><label>猜猜这是神马？</label></div>
+			<div>
+                <input id='writing-input' placeholder="我猜是？"/>
+			    <button id='submit-writing' class='btn btn-primary' type='button'>确定</button>
+            </div>
 		</span>
     </section>
 
@@ -131,7 +133,7 @@
                     <label class="create-at"></label>
                 </span>
             </div>
-            <img id="question-image" src="<%= data %>"/>
+            <img class="question-image" src="<%= data %>"/>
         </div>
     </script>
     <script type="text/template" id="writing-template">
@@ -142,7 +144,13 @@
                 </span>
                 <span>
                     <label class="create-at"></label>
-                    <label class="question-label"><%= data %></label>
+                    <label class="question-label">
+                        <% if ( typeId == 2 ) { %>
+                            出题：
+                        <% } else { %>
+                            猜到：
+                        <% } %>
+                        <%= data %></label>
                 </span>
         </div>
     </script>

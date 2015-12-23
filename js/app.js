@@ -11,6 +11,7 @@ $(function(){
 
     var writingTemplate = _.template($("#writing-template").html())
     var drawingTemplate = _.template($("#drawing-template").html())
+    var screenWidth = Math.min( $(window).width(), 600);
 
     var Frame = AV.Object.extend("Frame", {
         // Default attributes for the todo.
@@ -71,24 +72,23 @@ $(function(){
         if (frame.get("currentPosition") >= frame.get("max")) {
             //已经满了
             showPage("view-page")
+            notify("本次接力已经完成","normal")
             fetchAllPrevFrame();
         } else {
             if (checkAlreadyJoined(frame)) {
                 showPage("view-page")
+                notify("感谢您参与本次接力","normal")
                 fetchAllPrevFrame();
             } else {
                 if (frame.get("typeId") == TYPE_QUESTION || frame.get("typeId") == TYPE_WRITING) {
                     showPage("draw-page")
                     $("#draw-page .writing-block").html( writingTemplate(frame.toJSON()) );
-//                    $("#draw-page .nickname").text(frame.get("nickname"))
-//                    $("#draw-page .user-portrait").attr("src", frame.get("headUrl"))
-//                    $("#draw-page .question-label").text((frame.get("typeId") === TYPE_QUESTION ? "出题道：" : "猜之前的画：") + frame.get("data"));
                     enableCanvas();
                 } else {
                     showPage("write-page")
                     $("#write-page .drawing-block").html( drawingTemplate(frame.toJSON()) );
-//                    $("#write-page .nickname").text(frame.get("nickname"))
-//                    $("#write-page .user-portrait").attr("src", frame.get("headUrl"))
+                    $(".question-image").width(screenWidth).height(screenWidth);
+                    writingInput.val("");
                 }
             }
         }
@@ -102,7 +102,7 @@ $(function(){
         query.find({
             success: function (results) {
                 $("#view-page").removeClass("loading")
-                showAllFrame();
+                showAllFrame(results);
             },
             error: function (error) {
                 $("#view-page").removeClass("loading")
@@ -124,6 +124,7 @@ $(function(){
             $("#view-page .frames").append( writingTemplate(frame.toJSON()) )
         } else if ( frame.get("typeId") === TYPE_DRAWING ) {
             $("#view-page .frames").append( drawingTemplate(frame.toJSON()) )
+            $(".question-image").width(screenWidth).height(screenWidth);
         }
     }
 
@@ -162,9 +163,14 @@ $(function(){
 
     var submitQuestion = $("#submit-question");
     var questionInput = $("#question-input")
-    
+    var difficultySelect = $("#difficulty-select");
+    difficultySelect.change(function(){
+        if ( parseInt(difficultySelect.val()) === 0 ) {
+            questionInput.show();
+        } else questionInput.hide();
+    })
     submitQuestion.on("click",function(){
-        var difficulty = parseInt($("#difficulty-select").val());
+        var difficulty = parseInt(difficultySelect.val());
         var question;
         if ( difficulty == 0 ) {
             question = questionInput.val().trim();
@@ -201,8 +207,6 @@ $(function(){
 
     var submitDrawing = $("#submit-drawing");
     submitDrawing.click(function(){
-
-
         var frame = new Frame();
         var prevUsers = [];
         _.each(currentFrame.get("prevUsers"),function(userId){
@@ -213,7 +217,7 @@ $(function(){
         _.each(currentFrame.get("prevFrames"),function(objectId){
             prevFrames.push(objectId);
         });
-        prevFrames.push(currentFrame.get("objectId"))
+        prevFrames.push(currentFrame.id)
         frame.set({
             typeId: TYPE_DRAWING,
             userId: currentUser.userId,
@@ -221,7 +225,7 @@ $(function(){
             headUrl:  currentUser.headUrl,
             max: currentFrame.get("max"),
             difficulty: currentFrame.get("difficulty"),
-            currentPosition: currentFrame.get("currentPosition"),
+            currentPosition: currentFrame.get("currentPosition") + 1,
             prevUsers: prevUsers,
             prevFrames: prevFrames,
             data: canvas[0].toDataURL()
@@ -230,10 +234,53 @@ $(function(){
         frame.save(null,{
             success: function(f){
                 submitDrawing.prop("disabled",false).removeClass("loading");
+                currentFrame = frame;
                 window.location.hash = f.id;
             },
             error:function(){
-                notify("创建问题失败","danger")
+                notify("提交失败","danger")
+                submitDrawing.prop("disabled",false).removeClass("loading");
+            }
+        });
+    });
+
+    var writingInput = $("#writing-input");
+    var submitWriting = $("#submit-writing");
+    submitWriting.click(function(){
+        var writing = writingInput.val().trim();
+        if ( writing == "" ) return;
+        var frame = new Frame();
+        var prevUsers = [];
+        _.each(currentFrame.get("prevUsers"),function(userId){
+            prevUsers.push(userId);
+        });
+        prevUsers.push(currentUser.nickname); //TODO change to userId
+        var prevFrames = [];
+        _.each(currentFrame.get("prevFrames"),function(objectId){
+            prevFrames.push(objectId);
+        });
+        prevFrames.push(currentFrame.id)
+        frame.set({
+            typeId: TYPE_WRITING,
+            userId: currentUser.userId,
+            nickname: currentUser.nickname,
+            headUrl:  currentUser.headUrl,
+            max: currentFrame.get("max"),
+            difficulty: currentFrame.get("difficulty"),
+            currentPosition: currentFrame.get("currentPosition") + 1,
+            prevUsers: prevUsers,
+            prevFrames: prevFrames,
+            data: writing
+        })
+        submitDrawing.prop("disabled",true).addClass("loading");
+        frame.save(null,{
+            success: function(f){
+                submitDrawing.prop("disabled",false).removeClass("loading");
+                currentFrame = frame;
+                window.location.hash = f.id;
+            },
+            error:function(){
+                notify("提交失败","danger")
                 submitDrawing.prop("disabled",false).removeClass("loading");
             }
         });
@@ -241,17 +288,22 @@ $(function(){
 
 
     enableCanvas = function(){
-        if ( canvas.hasClass("enabled") ) return;
+        var cxt=canvas[0].getContext("2d");
+        if ( canvas.hasClass("enabled") ) {
+            cxt.clearRect(0,0,500,500);
+            $(".pen-type").removeClass("active");
+            $("#pen3").addClass("active");
+            return;
+        }
 
         var penMode = "pen";
 
         canvas.addClass("enabled");
-        var cxt=canvas[0].getContext("2d");
 
         cxt.strokeStyle="#000000";
         cxt.lineWidth = 3;
-        canvas.width($(window).width())
-        canvas.height( canvas.width() );
+        canvas.width(screenWidth)
+        canvas.height(screenWidth);
         var ratio = 500/canvas.width()
 
         $(".pen-type").click(function(e){
