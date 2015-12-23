@@ -161,6 +161,16 @@ $(function(){
     $(window).on("hashchange",jumpByHash)
 
 
+    $("#i-want-question").click(function(){
+        currentFrame = null
+        notify("","none");
+        window.location.hash = "question";
+    });
+
+    $("#i-want-share").click(function(){
+        notify("点击右上角的分享功能分享到任意地方","danger")
+    });
+
     var submitQuestion = $("#submit-question");
     var questionInput = $("#question-input")
     var difficultySelect = $("#difficulty-select");

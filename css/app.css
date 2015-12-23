@@ -37,6 +37,9 @@
 #notification.danger {
     background-color: lightcoral;
 }
+#notification.none {
+    background-color: transparent;
+}
 
 .frames {
     margin-bottom: 40px;
