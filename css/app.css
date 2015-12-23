@@ -18,3 +18,8 @@
 #drawing-canvas {
     border:1px dotted #000000;
 }
+
+.bottom-bar {
+    position: fixed;
+    bottom: 0;
+}

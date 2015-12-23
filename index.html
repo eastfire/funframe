@@ -21,8 +21,8 @@
     <script src="js/vender/underscore-min.js"></script>
     <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
     <script src="js/questions.js"></script>
-    <script src="src/vender/hammer.min.js"></script>
-    <script src="src/vender/jquery.hammer.min.js"></script>
+    <script src="js/vender/hammer.min.js"></script>
+    <script src="js/vender/jquery.hammer.js"></script>
     <script src="js/app.js"></script>
 
     <div id="notification"></div>
@@ -66,56 +66,84 @@
         <button type="button" class="btn btn-default" id='submit-question'>确定</button>
     </section>
 
+
     <section id="write-page" class="game-page">
+        <div class="drawing-block">
+        </div>
 		<span>
-			<label>猜猜这是啥？</label>
+			<label>猜猜这是神马？</label>
 			<input id='drawing-name'/>
-			<button id='ok-guess' class='btn btn-primary' type='button'>确定</button>
+			<button id='submit-writing' class='btn btn-primary' type='button'>确定</button>
 		</span>
     </section>
 
-
-
-
-
     <section id="view-page" class="game-page">
+        <div class="frames">
 
+        </div>
+        <div class="bottom-bar">
+            <button id="i-want-question" class="btn btn-default">我要出题</button>
+            <button id="i-want-share" class="btn btn-default">我要分享</button>
+        </div>
     </section>
 
 
     <section id="draw-page" class="game-page">
         <div>
-            <div class="question">
-                <div class="user">
-                    <img class="user-portrait"/>
-                    <div class="nickname"></div>
-                </div>
-                <label class="question-label"></label>
+            <div class="writing-block">
             </div>
-            <div style=''>
-                <canvas id='drawing-canvas' width='480' height='480' style=''>
+            <div id="canvas-block" style=''>
+                <canvas id='drawing-canvas' width='500' height='500' style=''>
                 </canvas>
                 <div id='canvas-bar'>
                     <div id='tools' class="btn-group" data-toggle="buttons">
-                        <label class="btn btn-primary" id="pen1" pen="1">
+                        <label class="btn btn-primary pen-type pen" id="pen1" pen="1">
                             <input type="radio" name="options">画笔1
                         </label>
-                        <label class="btn btn-primary active" id="pen3" pen="3">
+                        <label class="btn btn-primary pen-type pen active" id="pen3" pen="3">
                             <input type="radio" name="options">画笔2
                         </label>
-                        <label class="btn btn-primary" id="pen5" pen="5">
+                        <label class="btn btn-primary pen-type pen" id="pen5" pen="5">
                             <input type="radio" name="options">画笔3
                         </label>
-                        <label class="btn btn-primary" id="rubber5">
+                        <label class="btn btn-primary pen-type rubber" id="rubber5">
                             <input type="radio" name="options">橡皮
                         </label>
                     </div>
                     <button class="btn btn-danger" id="clear-all">清除所有</button>
-                    <button id='ok-draw' class='btn btn-primary'>确定</button>
+                    <div>
+                        <button id='submit-drawing' class='btn btn-primary'>提交画作</button>
+                    </div>
                 </div>
-                <div id='drawing-to-guess' style='display:none;'/>
             </div>
         </div>
     </section>
+
+    <script type="text/template" id="drawing-template">
+        <div class="drawing">
+            <div>
+                <span class="user">
+                    <img class="user-portrait" src="<%= headUrl %>"/>
+                    <div class="nickname"><%= nickname %></div>
+                </span>
+                <span>
+                    <label class="create-at"></label>
+                </span>
+            </div>
+            <img id="question-image" src="<%= data %>"/>
+        </div>
+    </script>
+    <script type="text/template" id="writing-template">
+        <div class="writing">
+                <span class="user">
+                    <img class="user-portrait" src="<%= headUrl %>"/>
+                    <div class="nickname"><%= nickname %></div>
+                </span>
+                <span>
+                    <label class="create-at"></label>
+                    <label class="question-label"><%= data %></label>
+                </span>
+        </div>
+    </script>
 </body>
 </html>
