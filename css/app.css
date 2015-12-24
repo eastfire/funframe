@@ -22,12 +22,14 @@
 .bottom-bar {
     position: fixed;
     bottom: 0;
+    z-index: 100;
 }
 
 #notification {
     font-size: 16px;
     line-height: 30px;
     text-align: center;
+    z-index: 100;
 }
 
 #notification.normal {
@@ -36,6 +38,9 @@
 
 #notification.danger {
     background-color: lightcoral;
+}
+#notification.warning {
+    background-color: orange;
 }
 #notification.none {
     background-color: transparent;

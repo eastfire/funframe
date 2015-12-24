@@ -28,7 +28,7 @@ $(function(){
     var canvas = $("#draw-page canvas");
 
     var notify = function( text, type ) {
-        notificationBar.removeClass("").addClass(type).text(text);
+        notificationBar.removeClass("warning","danger","normal","none").addClass(type).text(text);
     }
 
     var showPage = function(page) {
@@ -77,7 +77,11 @@ $(function(){
         } else {
             if (checkAlreadyJoined(frame)) {
                 showPage("view-page")
-                notify("感谢您参与本次接力","normal")
+                if ( frame.get("nickname") === currentUser.nickname ) { //TODO change nickname to userId
+                    notify("快分享链接，否则别人无法看到您的作品", "warning")
+                } else {
+                    notify("感谢您参与本次接力", "normal")
+                }
                 fetchAllPrevFrame();
             } else {
                 if (frame.get("typeId") == TYPE_QUESTION || frame.get("typeId") == TYPE_WRITING) {
@@ -325,7 +329,7 @@ $(function(){
                 cxt.lineWidth = target.attr("pen");
             } else {
                 penMode = "rubber";
-                cxt.lineWidth = 5;
+                cxt.lineWidth = 10;
             }
         })
 
@@ -333,14 +337,15 @@ $(function(){
             cxt.clearRect(0,0,500,500);
         })
 
-
-        var x,y;
+        var rubber = function(x,y) {
+            cxt.clearRect(x-20,y-20,41,41);
+        }
         canvas.hammer().bind("tap",function(e){
             var x = (e.gesture.center.x - canvas.position().left)*ratio;
             var y = (e.gesture.center.y - canvas.position().top)*ratio;
 
             if ( penMode === "rubber" ){
-                cxt.clearRect(x-10,y-10,21,21);
+                rubber(x,y);
             } else if ( penMode === "pen" ){
                 cxt.beginPath();
                 cxt.arc(x, y, cxt.lineWidth/1.5, 0, Math.PI*2, true);
@@ -352,7 +357,7 @@ $(function(){
             var y = (e.gesture.center.y - canvas.position().top)*ratio;
 
             if ( penMode === "rubber" ){
-                cxt.clearRect(x-10,y-10,21,21);
+                rubber(x,y);
             } else if ( penMode === "pen" ){
                 cxt.beginPath();
                 cxt.moveTo(x,y);
@@ -363,7 +368,7 @@ $(function(){
             var y = (e.gesture.center.y - canvas.position().top)*ratio;
 
             if ( penMode === "rubber" ){
-                cxt.clearRect(x-7,y-7,15,15);
+                rubber(x,y);
             } else if ( penMode === "pen" ){
                 cxt.lineTo(x,y);
                 cxt.stroke();
