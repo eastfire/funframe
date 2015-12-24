@@ -125,7 +125,7 @@ $(function(){
         clearNotify();
         $("#square-page").addClass("loading")
         var query = new AV.Query(Frame);
-        query.equalTo('finish', true).select("userId","nickname","headUrl","difficulty");
+        query.equalTo('finish', true).select("userId","nickname","headUrl","difficulty","max");
         query.find({
             success: function (results) {
                 $("#square-page").empty();
@@ -148,7 +148,7 @@ $(function(){
     var fetchMyRecentFinishGame = function() {
         $("#my-games-page").addClass("loading")
         var query = new AV.Query(Frame);
-        query.equalTo('finish', true).equalTo('prevUsers', currentUser.nickname).select("userId","nickname","headUrl","difficulty"); //TODO change to userId
+        query.equalTo('finish', true).equalTo('prevUsers', currentUser.nickname).select("userId","nickname","headUrl","difficulty","max"); //TODO change to userId
         query.find({
             success: function (results) {
                 $("#my-games-page").empty();

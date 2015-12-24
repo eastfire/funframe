@@ -51,6 +51,7 @@
         <div>
             <label class="length-title">接力长度：</label>
             <select id="length-select">
+                <option class="length-option" value="5">4</option>
                 <option class="length-option" value="5">5</option>
                 <option class="length-option" value="6">6</option>
                 <option class="length-option" value="7">7</option>
@@ -175,13 +176,17 @@
 
     <script type="text/template" id="game-item-template">
         <a class="game-item" href="#<%=objectId%>">
-                <span class="user">
-                    <% if ( headUrl ) { %>
-                    <img class="user-portrait" src="<%= headUrl %>"/>
-                    <% } %>
-                    <div class="nickname"><%= nickname %></div>
-                </span>
-                <span>
+            <% if ( headUrl ) { %>
+            <span>
+                <img class="user-portrait" src="<%= headUrl %>"/>
+            </span>
+            <% } %>
+            <span class="user">
+                <div>
+                    <label class="nickname"><%= nickname %></label>
+                </div>
+                <div class="max-length">经过 <%= max %> 次接龙</div>
+                <div>
                     <label class="create-at">完成于 <%= relative_time_text(createdAt) %></label>
                     <label class="difficulty-label">
                         <% if (difficulty == 0) { %>
@@ -196,7 +201,8 @@
                         难度：疯狂
                         <% } %>
                     </label>
-                </span>
+                </div>
+            </span>
         </a>
     </script>
 </body>
