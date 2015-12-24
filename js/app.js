@@ -11,6 +11,7 @@ $(function(){
 
     var writingTemplate = _.template($("#writing-template").html())
     var drawingTemplate = _.template($("#drawing-template").html())
+    var gameItemTemplate = _.template($("#game-item-template").html())
     var screenWidth = Math.min( $(window).width(), 600);
 
     var Frame = AV.Object.extend("Frame", {
@@ -28,12 +29,18 @@ $(function(){
     var canvas = $("#draw-page canvas");
 
     var notify = function( text, type ) {
-        notificationBar.removeClass("warning","danger","normal","none").addClass(type).text(text);
+        notificationBar.removeClass("warning danger normal none").addClass(type).text(text);
+    }
+    var clearNotify = function( ){
+        notify("","none")
     }
 
     var showPage = function(page) {
         $(".game-page").hide();
         $("#"+page).show();
+        if ( page === "draw-page" || page === "write-page" || page === "login-page" ) {
+            $("#bottom-bar").hide();
+        } else $("#bottom-bar").show();
     }
 
     var currentUser = null;
@@ -90,8 +97,7 @@ $(function(){
                     enableCanvas();
                 } else {
                     showPage("write-page")
-                    $("#write-page .drawing-block").html( drawingTemplate(frame.toJSON()) );
-                    $(".question-image").width(screenWidth).height(screenWidth);
+                    renderFrame($("#write-page .drawing-block"), frame);
                     writingInput.val("");
                 }
             }
@@ -115,20 +121,80 @@ $(function(){
         });
     }
 
-    var showAllFrame = function(frames){
-        $("#view-page .frames").empty();
-        _.each(frames, renderFrame );
-        renderFrame(currentFrame)
+    var fetchRecentFinishGame = function() {
+        clearNotify();
+        $("#square-page").addClass("loading")
+        var query = new AV.Query(Frame);
+        query.equalTo('finish', true).select("userId","nickname","headUrl","difficulty");
+        query.find({
+            success: function (results) {
+                $("#square-page").empty();
+                $("#square-page").removeClass("loading")
+                if ( results.length ) {
+                    _.each(results, function (frame) {
+                        $("#square-page").append(gameItemTemplate(frame.toJSON()));
+                    })
+                } else {
+                    notify("还没有完成的接力，等着你来完成哦","warning")
+                }
+            },
+            error: function (error) {
+                $("#square-page").removeClass("loading")
+                notify("获取数据失败", "danger")
+            }
+        });
     }
 
-    var renderFrame = function(frame){
+    var fetchMyRecentFinishGame = function() {
+        $("#my-games-page").addClass("loading")
+        var query = new AV.Query(Frame);
+        query.equalTo('finish', true).equalTo('prevUsers', currentUser.nickname).select("userId","nickname","headUrl","difficulty"); //TODO change to userId
+        query.find({
+            success: function (results) {
+                $("#my-games-page").empty();
+                $("#my-games-page").removeClass("loading")
+                if ( results.length ) {
+                    _.each(results, function (frame) {
+                        $("#my-games-page").append(gameItemTemplate(frame.toJSON()));
+                    })
+                } else {
+                    notify("还没有完成的接力，等着你来完成哦","warning")
+                }
+            },
+            error: function (error) {
+                $("#my-games-page").removeClass("loading")
+                notify("获取数据失败", "danger")
+            }
+        });
+    }
+
+    var frameList = $("#view-page .frames");
+    var showAllFrame = function(frames){
+        frameList.empty();
+        _.each(frames, function(frame){
+            renderFrame(frameList, frame)
+        } );
+        renderFrame(frameList, currentFrame)
+    }
+
+    var renderFrame = function(parentEl, frame){
         if ( frame.get("typeId") === TYPE_QUESTION ) {
-            $("#view-page .frames").append( writingTemplate(frame.toJSON()) )
+            parentEl.append( writingTemplate(frame.toJSON()) )
         } else if ( frame.get("typeId") === TYPE_WRITING ) {
-            $("#view-page .frames").append( writingTemplate(frame.toJSON()) )
+            parentEl.append( writingTemplate(frame.toJSON()) )
         } else if ( frame.get("typeId") === TYPE_DRAWING ) {
-            $("#view-page .frames").append( drawingTemplate(frame.toJSON()) )
-            $(".question-image").width(screenWidth).height(screenWidth);
+            var el = $(drawingTemplate(frame.toJSON()));
+            var canvas = el.children(".viewing-canvas");
+            canvas.width(screenWidth).height(screenWidth)
+            parentEl.append( el );
+            (function(canvas, frame){
+                var image = new Image();
+                var ctx=canvas[0].getContext("2d");
+                image.onload = function() {
+                    ctx.drawImage(image, 0, 0);
+                };
+                image.src = frame.get("data");
+            })(canvas, frame)
         }
     }
 
@@ -139,8 +205,14 @@ $(function(){
             if ( hash != "" ) {
                 if ( hash == "question" ) {
                     showPage("question-page")
+                } else if ( hash == "square" ) {
+                    showPage("square-page")
+                    fetchRecentFinishGame();
+                } else if ( hash == "my-games" ) {
+                    showPage("my-games-page")
+                    fetchMyRecentFinishGame();
                 } else {
-                    if ( currentFrame === null) {
+                    if ( !currentFrame ) {
                         var query = new AV.Query(Frame);
                         query.get(hash, {
                             success: function (frame) {
@@ -149,6 +221,7 @@ $(function(){
                             },
                             error: function (error) {
                                 notify("获取数据失败", "danger")
+                                window.location.hash = "question";
                             }
                         });
                     } else {
@@ -175,6 +248,14 @@ $(function(){
         notify("点击右上角的分享功能分享到任意地方","danger")
     });
 
+    $("#square").click(function(){
+        window.location.hash = "square";
+    });
+
+    $("#my-games").click(function(){
+        window.location.hash = "my-games";
+    });
+
     var submitQuestion = $("#submit-question");
     var questionInput = $("#question-input")
     var difficultySelect = $("#difficulty-select");
@@ -184,6 +265,7 @@ $(function(){
         } else questionInput.hide();
     })
     submitQuestion.on("click",function(){
+        currentFrame = frame;
         var difficulty = parseInt(difficultySelect.val());
         var question;
         if ( difficulty == 0 ) {
@@ -240,6 +322,7 @@ $(function(){
             max: currentFrame.get("max"),
             difficulty: currentFrame.get("difficulty"),
             currentPosition: currentFrame.get("currentPosition") + 1,
+            finish: currentFrame.get("currentPosition") + 1 >= currentFrame.get("max"),
             prevUsers: prevUsers,
             prevFrames: prevFrames,
             data: canvas[0].toDataURL()

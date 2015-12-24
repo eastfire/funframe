@@ -17,17 +17,23 @@
 
 #drawing-canvas {
     border:1px dotted #000000;
+    box-shadow: 0 0 15px 0 black inset;
 }
 
-.bottom-bar {
+#bottom-bar {
     position: fixed;
     bottom: 0;
     z-index: 100;
+    width: 100%;
+}
+
+.bottom-bar-btn {
+    width: 24%;
 }
 
 #notification {
     font-size: 16px;
-    line-height: 30px;
+    line-height: 40px;
     text-align: center;
     z-index: 100;
 }
@@ -48,4 +54,18 @@
 
 .frames {
     margin-bottom: 40px;
+}
+
+.game-item {
+    border: 1px solid black;
+    display: block;
+    margin: 5px;
+    padding: 5px;
+}
+.game-item .difficulty-label {
+    float:right;
+}
+
+#drawing-canvas {
+    box-shadow: 5px inset black;
 }
