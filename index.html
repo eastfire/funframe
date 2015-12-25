@@ -4,7 +4,8 @@
     <meta name="viewport" content="width=device-width,target-densitydpi=high-dpi,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title>画话接力</title>
     <meta name="description" content="画话接力">
-    <link href="css/bootstrap.css" rel='stylesheet'/>
+    <link href="css/bootstrap.min.css" rel='stylesheet'/>
+    <link href="css/iconfont.css" rel='stylesheet'/>
     <link href="css/app.css" rel='stylesheet'/>
 
 
@@ -12,11 +13,11 @@
 <body>
     <section id="login-page" class="game-page">
         <div class="input-group">
-            <span class="input-group-addon glyphicon glyphicon-user"></span>
+            <span class="input-group-addon  iconfont icon-account"></span>
             <input type="text" class="form-control" placeholder="昵称" id='user-name'/>
         </div>
         <div>本系统没有用户系统，请任意输入昵称即可</div>
-        <button type="button" class="btn btn-default" id='login'>登录</button>
+        <button type="button" class="btn btn-primary" id='login'>登录</button>
     </section>
 
     <script src="js/vender/jquery-2.1.1.min.js"></script>
@@ -108,16 +109,16 @@
                 <div id='canvas-bar'>
                     <div id='tools' class="btn-group" data-toggle="buttons">
                         <label class="btn btn-primary pen-type pen" id="pen1" pen="1">
-                            <input type="radio" name="options">画笔1
+                            <input type="radio" name="options"><i class="iconfont icon-pen"></i>1
                         </label>
                         <label class="btn btn-primary pen-type pen active" id="pen3" pen="3">
-                            <input type="radio" name="options">画笔2
+                            <input type="radio" name="options"><i class="iconfont icon-pen"></i>2
                         </label>
                         <label class="btn btn-primary pen-type pen" id="pen5" pen="5">
-                            <input type="radio" name="options">画笔3
+                            <input type="radio" name="options"><i class="iconfont icon-pen"></i>3
                         </label>
                         <label class="btn btn-primary pen-type rubber" id="rubber5">
-                            <input type="radio" name="options">橡皮
+                            <input type="radio" name="options"><i class="iconfont icon-rubber"></i>
                         </label>
                     </div>
                     <button class="btn btn-danger" id="clear-all">清除所有</button>

@@ -92,6 +92,9 @@ $(function(){
                 fetchAllPrevFrame();
             } else {
                 if (frame.get("typeId") == TYPE_QUESTION || frame.get("typeId") == TYPE_WRITING) {
+                    if ( frame.get("typeId") == TYPE_QUESTION ) {
+                        notify("请您根据题目在下面的画板作画", "normal")
+                    } else notify("请您根据前人的猜测答案在下面的画板作画", "normal")
                     showPage("draw-page")
                     $("#draw-page .writing-block").html( writingTemplate(frame.toJSON()) );
                     enableCanvas();

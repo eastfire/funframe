@@ -10,6 +10,14 @@
     margin-top: 50px;
 }
 
+#login-page, #question-page {
+    padding: 10px;
+}
+
+#login {
+    width: 100%
+}
+
 .loading:before {
     content:url(../res/loading.gif);
     background-size:contain;
@@ -18,6 +26,15 @@
 #drawing-canvas {
     border:1px dotted #000000;
     box-shadow: 0 0 15px 0 black inset;
+}
+
+#canvas-bar {
+    margin: 5px;
+}
+
+#submit-drawing {
+    margin: 5px 5% 0;
+    width:80%;
 }
 
 #bottom-bar {
