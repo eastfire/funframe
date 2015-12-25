@@ -94,7 +94,7 @@ $(function(){
                 if (frame.get("typeId") == TYPE_QUESTION || frame.get("typeId") == TYPE_WRITING) {
                     if ( frame.get("typeId") == TYPE_QUESTION ) {
                         notify("请您根据题目在下面的画板作画", "normal")
-                    } else notify("请您根据前人的猜测答案在下面的画板作画", "normal")
+                    } else notify("请您根据前人出的题目在下面的画板作画", "normal")
                     showPage("draw-page")
                     $("#draw-page .writing-block").html( writingTemplate(frame.toJSON()) );
                     enableCanvas();
@@ -245,21 +245,29 @@ $(function(){
     $(window).on("hashchange",jumpByHash)
 
 
+    var shareMask = $("#share-mask");
+    shareMask.click(function(){
+        shareMask.hide();
+    })
     $("#i-want-question").click(function(){
+        shareMask.hide();
         currentFrame = null
         notify("","none");
         window.location.hash = "question";
     });
 
     $("#i-want-share").click(function(){
+        shareMask.show();
         notify("点击右上角的分享功能分享到任意地方","danger")
     });
 
     $("#square").click(function(){
+        shareMask.hide();
         window.location.hash = "square";
     });
 
     $("#my-games").click(function(){
+        shareMask.hide();
         window.location.hash = "my-games";
     });
 
@@ -376,10 +384,10 @@ $(function(){
             prevFrames: prevFrames,
             data: writing
         })
-        submitDrawing.prop("disabled",true).addClass("loading");
+        submitWriting.prop("disabled",true).addClass("loading");
         frame.save(null,{
             success: function(f){
-                submitDrawing.prop("disabled",false).removeClass("loading");
+                submitWriting.prop("disabled",false).removeClass("loading");
                 currentFrame = frame;
                 window.location.hash = f.id;
             },

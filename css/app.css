@@ -7,7 +7,7 @@
 }
 
 .game-page {
-    margin-top: 50px;
+    margin-top: 40px;
 }
 
 #login-page, #question-page {
@@ -42,10 +42,13 @@
     bottom: 0;
     z-index: 100;
     width: 100%;
+    background-color: white;
 }
 
 .bottom-bar-btn {
     width: 24%;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 #notification {
@@ -74,7 +77,7 @@
 }
 
 .game-item {
-    border: 1px solid black;
+    border: 1px dotted black;
     display: block;
     margin: 5px;
     padding: 5px;
@@ -92,7 +95,23 @@
     border-top: 1px dashed black;
 }
 
-.drawing > .info {
+.drawing {
     padding: 5px;
     border-top: 1px dashed black;
+}
+
+#share-mask {
+    background-color: rgba(128, 128, 128, 0.5);
+    height: 100%;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 150;
+}
+
+#share-mask #arrow {
+    position: absolute;
+    right: 5px;
+    top: 5px;
 }

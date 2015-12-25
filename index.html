@@ -33,11 +33,7 @@
 
     <!--img id="placeholder" src="res/icon-big.png" style="z-index: 100;position: absolute;top: 400px;left: 0;width: 1px;height:1px;"/-->
 
-    <section id="loading-page" class="game-page">
-
-    </section>
-
-    <section id="question-page" class="game-page">
+    <section id="question-page" class="game-page" style="display: none">
         <div>
         <label class="question-title">我来出题</label>
             <select id="difficulty-select">
@@ -74,7 +70,7 @@
     </section>
 
 
-    <section id="write-page" class="game-page">
+    <section id="write-page" class="game-page" style="display: none">
         <div class="drawing-block">
         </div>
 		<span>
@@ -86,20 +82,20 @@
 		</span>
     </section>
 
-    <section id="view-page" class="game-page">
+    <section id="view-page" class="game-page" style="display: none">
         <div class="frames">
 
         </div>
 
     </section>
 
-    <section id="square-page" class="game-page">
+    <section id="square-page" class="game-page" style="display: none">
     </section>
 
-    <section id="my-games-page" class="game-page">
+    <section id="my-games-page" class="game-page" style="display: none">
     </section>
 
-    <section id="draw-page" class="game-page">
+    <section id="draw-page" class="game-page" style="display: none">
         <div>
             <div class="writing-block">
             </div>
@@ -130,11 +126,15 @@
         </div>
     </section>
 
+    <div id="share-mask" style="display: none">
+        <img id="arrow" src="res/arrow.png">
+    </div>
+
     <div id="bottom-bar" style="display: none">
-        <button id="i-want-question" class="bottom-bar-btn btn btn-default">我要出题</button>
-        <button id="i-want-share" class="bottom-bar-btn btn btn-default">我要分享</button>
-        <button id="square" class="bottom-bar-btn btn btn-default">广场</button>
-        <button id="my-games" class="bottom-bar-btn btn btn-default">我的接力</button>
+        <div type="button" id="i-want-question" class="bottom-bar-btn btn btn-default">我要出题</div>
+        <div type="button" id="i-want-share" class="bottom-bar-btn btn btn-default">我要分享</div>
+        <div type="button" id="square" class="bottom-bar-btn btn btn-default">广场</div>
+        <div type="button" id="my-games" class="bottom-bar-btn btn btn-default">我的接力</div>
     </div>
 
     <script type="text/template" id="drawing-template">
@@ -168,7 +168,7 @@
                         <% if ( typeId == 2 ) { %>
                             出题：
                         <% } else { %>
-                            猜之前人画的是：
+                            说：
                         <% } %>
                         <%= data %></label>
                 </span>
