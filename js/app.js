@@ -153,6 +153,7 @@ $(function(){
     }
 
     var fetchMyRecentFinishGame = function() {
+        clearNotify();
         $("#my-games-page").addClass("loading")
         var query = new AV.Query(Frame);
         query.equalTo('finish', true).equalTo('prevUsers', currentUser.nickname).select("userId","nickname","headUrl","difficulty","max"); //TODO change to userId
@@ -164,6 +165,10 @@ $(function(){
                     _.each(results, function (frame) {
                         $("#my-games-page").append(gameItemTemplate(frame.toJSON()));
                     })
+                    $(".game-item").click(function(){
+                        currentFrame = null;
+                        window.location.hash = $(this).attr("id");
+                    });
                 } else {
                     notify("还没有完成的接力，等着你来完成哦","warning")
                 }
