@@ -176,7 +176,7 @@
     </script>
 
     <script type="text/template" id="game-item-template">
-        <a class="game-item" href="#<%=objectId%>">
+        <div class="game-item" id="<%=objectId%>">
             <% if ( headUrl ) { %>
             <span>
                 <img class="user-portrait" src="<%= headUrl %>"/>
@@ -189,7 +189,7 @@
                 <div class="max-length">经过 <%= max %> 次接龙</div>
                 <div>
                     <label class="create-at">完成于 <%= relative_time_text(createdAt) %></label>
-                    <label class="difficulty-label">
+                    <label class="difficulty-label difficulty-<%=difficulty%>">
                         <% if (difficulty == 0) { %>
                         自选题
                         <% } else if (difficulty == 1) { %>
@@ -204,7 +204,7 @@
                     </label>
                 </div>
             </span>
-        </a>
+        </div>
     </script>
 </body>
 </html>

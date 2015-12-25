@@ -86,3 +86,13 @@
 #drawing-canvas {
     box-shadow: 5px inset black;
 }
+
+.writing {
+    padding: 5px;
+    border-top: 1px dashed black;
+}
+
+.drawing > .info {
+    padding: 5px;
+    border-top: 1px dashed black;
+}
