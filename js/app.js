@@ -134,6 +134,10 @@ $(function(){
                     _.each(results, function (frame) {
                         $("#square-page").append(gameItemTemplate(frame.toJSON()));
                     })
+                    $(".game-item").click(function(){
+                        currentFrame = null;
+                        window.location.hash = $(this).attr("id");
+                    });
                 } else {
                     notify("还没有完成的接力，等着你来完成哦","warning")
                 }
