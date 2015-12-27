@@ -15,7 +15,6 @@ $(function(){
     var screenWidth = Math.min( $(window).width(), 600);
 
     var Frame = AV.Object.extend("Frame", {
-        // Default attributes for the todo.
         defaults: {
 
         },
@@ -99,7 +98,9 @@ $(function(){
                     $("#draw-page .writing-block").html( writingTemplate(frame.toJSON()) );
                     enableCanvas();
                 } else {
+                    clearNotify();
                     showPage("write-page")
+                    $("#write-page .drawing-block").empty();
                     renderFrame($("#write-page .drawing-block"), frame);
                     writingInput.val("");
                 }
@@ -210,17 +211,25 @@ $(function(){
         }
     }
 
+    var allBottomBarButtons = $(".bottom-bar-btn")
+    var DEFAULT_HASH = "question";
     var jumpByHash = function(){
         var hash = window.location.hash;
         if ( hash ) {
             hash = hash.substr(1);
             if ( hash != "" ) {
                 if ( hash == "question" ) {
+                    allBottomBarButtons.removeClass("active");
+                    $("#i-want").addClass("active");
                     showPage("question-page")
                 } else if ( hash == "square" ) {
+                    allBottomBarButtons.removeClass("active");
+                    $("#quare").addClass("active");
                     showPage("square-page")
                     fetchRecentFinishGame();
                 } else if ( hash == "my-games" ) {
+                    allBottomBarButtons.removeClass("active");
+                    $("#my-games").addClass("active");
                     showPage("my-games-page")
                     fetchMyRecentFinishGame();
                 } else {
@@ -233,7 +242,7 @@ $(function(){
                             },
                             error: function (error) {
                                 notify("获取数据失败", "danger")
-                                window.location.hash = "question";
+                                window.location.hash = DEFAULT_HASH;
                             }
                         });
                     } else {
@@ -241,10 +250,10 @@ $(function(){
                     }
                 }
             } else {
-                window.location.hash = "question";
+                window.location.hash = DEFAULT_HASH;
             }
         } else {
-            window.location.hash = "question";
+            window.location.hash = DEFAULT_HASH;
         }
     }
     $(window).on("hashchange",jumpByHash)
@@ -254,7 +263,7 @@ $(function(){
     shareMask.click(function(){
         shareMask.hide();
     })
-    $("#i-want-question").click(function(){
+    $("#i-want").click(function(){
         shareMask.hide();
         currentFrame = null
         notify("","none");
@@ -275,6 +284,11 @@ $(function(){
         shareMask.hide();
         window.location.hash = "my-games";
     });
+
+    $(".i-want-title").click(function(){
+        $(".i-want-block-content").hide();
+        $(this).siblings(".i-want-block-content").show();
+    })
 
     var submitQuestion = $("#submit-question");
     var questionInput = $("#question-input")
@@ -306,7 +320,8 @@ $(function(){
             currentPosition: 0,
             prevUsers: [],
             prevFrames: [],
-            data: question
+            data: question,
+            needContinue: true
         })
         submitQuestion.prop("disabled",true).addClass("loading");
         frame.save(null,{
@@ -321,6 +336,88 @@ $(function(){
         });
     });
 
+    var allIWantBtn = $(".i-want-btn")
+    var iWantDraw = $("#i-want-draw")
+    var iWantWrite = $("#i-want-write")
+    var iWantDrawOrWrite = $("#i-want-draw-or-write")
+    iWantDraw.click(function(){
+        iWantDraw.addClass("loading");
+        allIWantBtn.prop("disabled",true)
+        var query = new AV.Query(Frame);
+        query.equalTo('needContinue', true).notEqualTo('typeId', TYPE_DRAWING).notEqualTo ('prevUsers', currentUser.nickname) //TODO use userId
+            .select("difficulty","max");
+        query.find({
+            success: function (results) {
+                iWantDraw.removeClass("loading");
+                allIWantBtn.prop("disabled",false)
+                if ( results.length ) {
+                    currentFrame = null;
+                    window.location.hash = _.sample(results).id;
+                } else {
+                    notify("还没有题目可供画图，等待你来出题","warning")
+                }
+            },
+            error: function (error) {
+                iWantDraw.removeClass("loading");
+                allIWantBtn.prop("disabled",false)
+                notify("获取数据失败", "danger")
+            }
+        });
+    });
+
+
+    iWantWrite.click(function(){
+        iWantWrite.addClass("loading");
+        allIWantBtn.prop("disabled",true)
+        var query = new AV.Query(Frame);
+        query.equalTo('needContinue', true).equalTo('typeId', TYPE_DRAWING).notEqualTo ('prevUsers', currentUser.nickname) //TODO use userId
+            .select("difficulty","max");
+        query.find({
+            success: function (results) {
+                iWantWrite.removeClass("loading");
+                allIWantBtn.prop("disabled",false)
+                if ( results.length ) {
+                    currentFrame = null;
+                    window.location.hash = _.sample(results).id;
+                } else {
+                    notify("还没有猜测的图画，等待你来画图","warning")
+                }
+            },
+            error: function (error) {
+                iWantWrite.removeClass("loading");
+                allIWantBtn.prop("disabled",false)
+                notify("获取数据失败", "danger")
+            }
+        });
+    });
+
+
+    iWantDrawOrWrite.click(function(){
+        iWantDrawOrWrite.addClass("loading");
+        allIWantBtn.prop("disabled",true)
+        var query = new AV.Query(Frame);
+        query.equalTo('needContinue', true).notEqualTo ('prevUsers', currentUser.nickname) //TODO use userId
+            .select("difficulty","max");
+        query.find({
+            success: function (results) {
+                iWantDrawOrWrite.removeClass("loading");
+                allIWantBtn.prop("disabled",false)
+                if ( results.length ) {
+                    currentFrame = null;
+                    window.location.hash = _.sample(results).id;
+                } else {
+                    notify("还没有可供接力的题目或图画，等待你来推广","warning")
+                }
+            },
+            error: function (error) {
+                iWantDrawOrWrite.removeClass("loading");
+                allIWantBtn.prop("disabled",false)
+                notify("获取数据失败", "danger")
+            }
+        });
+    });
+
+
     var submitDrawing = $("#submit-drawing");
     submitDrawing.click(function(){
         var frame = new Frame();
@@ -334,6 +431,7 @@ $(function(){
             prevFrames.push(objectId);
         });
         prevFrames.push(currentFrame.id)
+        var finish = currentFrame.get("currentPosition") + 1 >= currentFrame.get("max")
         frame.set({
             typeId: TYPE_DRAWING,
             userId: currentUser.userId,
@@ -342,17 +440,30 @@ $(function(){
             max: currentFrame.get("max"),
             difficulty: currentFrame.get("difficulty"),
             currentPosition: currentFrame.get("currentPosition") + 1,
-            finish: currentFrame.get("currentPosition") + 1 >= currentFrame.get("max"),
+            finish: finish,
             prevUsers: prevUsers,
             prevFrames: prevFrames,
-            data: canvas[0].toDataURL()
+            data: canvas[0].toDataURL(),
+            needContinue: !finish
         })
         submitDrawing.prop("disabled",true).addClass("loading");
         frame.save(null,{
             success: function(f){
-                submitDrawing.prop("disabled",false).removeClass("loading");
-                currentFrame = frame;
-                window.location.hash = f.id;
+                //save prev frame not last
+                currentFrame.save({
+                    needContinue: false
+                },{
+                    success:function(){
+                        submitDrawing.prop("disabled",false).removeClass("loading");
+                        currentFrame = frame;
+                        window.location.hash = f.id;
+                    },
+                    error:function(){
+                        submitDrawing.prop("disabled",false).removeClass("loading");
+                        currentFrame = frame;
+                        window.location.hash = f.id;
+                    }
+                })
             },
             error:function(){
                 notify("提交失败","danger")
@@ -377,6 +488,7 @@ $(function(){
             prevFrames.push(objectId);
         });
         prevFrames.push(currentFrame.id)
+        var finish = currentFrame.get("currentPosition") + 1 >= currentFrame.get("max")
         frame.set({
             typeId: TYPE_WRITING,
             userId: currentUser.userId,
@@ -385,16 +497,30 @@ $(function(){
             max: currentFrame.get("max"),
             difficulty: currentFrame.get("difficulty"),
             currentPosition: currentFrame.get("currentPosition") + 1,
+            finish: finish,
             prevUsers: prevUsers,
             prevFrames: prevFrames,
-            data: writing
+            data: writing,
+            needContinue: !finish
         })
         submitWriting.prop("disabled",true).addClass("loading");
         frame.save(null,{
             success: function(f){
-                submitWriting.prop("disabled",false).removeClass("loading");
-                currentFrame = frame;
-                window.location.hash = f.id;
+                //save prev frame not last
+                currentFrame.save({
+                    needContinue: false
+                },{
+                    success:function() {
+                        submitWriting.prop("disabled",false).removeClass("loading");
+                        currentFrame = frame;
+                        window.location.hash = f.id;
+                    },
+                    error:function(){
+                        submitWriting.prop("disabled",false).removeClass("loading");
+                        currentFrame = frame;
+                        window.location.hash = f.id;
+                    }
+                });
             },
             error:function(){
                 notify("提交失败","danger")

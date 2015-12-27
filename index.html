@@ -16,7 +16,7 @@
             <span class="input-group-addon  iconfont icon-account"></span>
             <input type="text" class="form-control" placeholder="昵称" id='user-name'/>
         </div>
-        <div>本系统没有用户系统，请任意输入昵称即可</div>
+        <div class="login-hint">本系统没有用户系统，请任意输入昵称即可</div>
         <button type="button" class="btn btn-primary" id='login'>登录</button>
     </section>
 
@@ -34,39 +34,51 @@
     <!--img id="placeholder" src="res/icon-big.png" style="z-index: 100;position: absolute;top: 400px;left: 0;width: 1px;height:1px;"/-->
 
     <section id="question-page" class="game-page" style="display: none">
-        <div>
-        <label class="question-title">我来出题</label>
-            <select id="difficulty-select">
-                <option class="difficulty" value="1">难度：简单</option>
-                <option class="difficulty" value="2" selected>难度：普通</option>
-                <option class="difficulty" value="3">难度：困难</option>
-                <option class="difficulty" value="4">难度：疯狂</option>
-                <option class="difficulty" value="0">自选题</option>
-            </select>
+        <div class="i-want-block">
+            <label id="question-title" class="i-want-title">我要出题 &gt;</label>
+            <div id="i-want-question" class="i-want-block-content" style="display: none">
+                <div>
+                    <select id="difficulty-select">
+                        <option class="difficulty" value="1">难度：简单</option>
+                        <option class="difficulty" value="2" selected>难度：普通</option>
+                        <option class="difficulty" value="3">难度：困难</option>
+                        <option class="difficulty" value="4">难度：疯狂</option>
+                        <option class="difficulty" value="0">自选题</option>
+                    </select>
+                </div>
+                <div><input class="" id="question-input" style="display: none"/></div>
+                <div>
+                    <label class="length-title">接力长度：</label>
+                    <select id="length-select">
+                        <option class="length-option" value="5">4</option>
+                        <option class="length-option" value="5">5</option>
+                        <option class="length-option" value="6">6</option>
+                        <option class="length-option" value="7">7</option>
+                        <option class="length-option" value="8">8</option>
+                        <option class="length-option" value="9" selected>9</option>
+                        <option class="length-option" value="10">10</option>
+                        <option class="length-option" value="11">11</option>
+                        <option class="length-option" value="12">12</option>
+                        <option class="length-option" value="13">13</option>
+                        <option class="length-option" value="14">14</option>
+                        <option class="length-option" value="15">15</option>
+                        <option class="length-option" value="16">16</option>
+                        <option class="length-option" value="17">17</option>
+                        <option class="length-option" value="18">18</option>
+                        <option class="length-option" value="19">19</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-primary" id='submit-question'>确定</button>
+            </div>
         </div>
-        <div><input class="" id="question-input" style="display: none"/></div>
-        <div>
-            <label class="length-title">接力长度：</label>
-            <select id="length-select">
-                <option class="length-option" value="5">4</option>
-                <option class="length-option" value="5">5</option>
-                <option class="length-option" value="6">6</option>
-                <option class="length-option" value="7">7</option>
-                <option class="length-option" value="8">8</option>
-                <option class="length-option" value="9" selected>9</option>
-                <option class="length-option" value="10">10</option>
-                <option class="length-option" value="11">11</option>
-                <option class="length-option" value="12">12</option>
-                <option class="length-option" value="13">13</option>
-                <option class="length-option" value="14">14</option>
-                <option class="length-option" value="15">15</option>
-                <option class="length-option" value="16">16</option>
-                <option class="length-option" value="17">17</option>
-                <option class="length-option" value="18">18</option>
-                <option class="length-option" value="19">19</option>
-            </select>
+        <div class="i-want-block">
+            <label id="continue-title" class="i-want-title">我要接力 &gt;</label>
+            <div id="i-want-continue" class="i-want-block-content" style="display: none">
+                <button type="button" class="btn btn-default i-want-btn" id='i-want-draw'>我要画图</button>
+                <button type="button" class="btn btn-default i-want-btn" id='i-want-write'>我要猜图</button>
+                <button type="button" class="btn btn-default i-want-btn" id='i-want-draw-or-write'>我要画图或猜图</button>
+            </div>
         </div>
-        <button type="button" class="btn btn-primary" id='submit-question'>确定</button>
     </section>
 
 
@@ -131,7 +143,7 @@
     </div>
 
     <div id="bottom-bar" style="display: none">
-        <div type="button" id="i-want-question" class="bottom-bar-btn btn btn-default">我要出题</div>
+        <div type="button" id="i-want" class="bottom-bar-btn btn btn-default">我要……</div>
         <div type="button" id="i-want-share" class="bottom-bar-btn btn btn-default">我要分享</div>
         <div type="button" id="square" class="bottom-bar-btn btn btn-default">广场</div>
         <div type="button" id="my-games" class="bottom-bar-btn btn btn-default">我的接力</div>
