@@ -420,6 +420,8 @@ $(function(){
 
     var submitDrawing = $("#submit-drawing");
     submitDrawing.click(function(){
+        //TODO check canvas has enough content
+
         var frame = new Frame();
         var prevUsers = [];
         _.each(currentFrame.get("prevUsers"),function(userId){
@@ -529,11 +531,13 @@ $(function(){
         });
     });
 
-
+    var CANVAS_WIDTH = 500;
+    var CANVAS_HEIGHT = 500;
     enableCanvas = function(){
         var cxt=canvas[0].getContext("2d");
+        submitDrawing.prop("disabled",true)
         if ( canvas.hasClass("enabled") ) {
-            cxt.clearRect(0,0,500,500);
+            cxt.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
             $(".pen-type").removeClass("active");
             $("#pen3").addClass("active");
             return;
@@ -547,7 +551,7 @@ $(function(){
         cxt.lineWidth = 3;
         canvas.width(screenWidth)
         canvas.height(screenWidth);
-        var ratio = 500/canvas.width()
+        var ratio = CANVAS_WIDTH/canvas.width()
 
         $(".pen-type").click(function(e){
             var target = $(e.currentTarget);
@@ -563,7 +567,8 @@ $(function(){
         })
 
         $("#clear-all").click(function(){
-            cxt.clearRect(0,0,500,500);
+            cxt.clearRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
+            submitDrawing.prop("disabled",true)
         })
 
         var rubber = function(x,y) {
@@ -576,6 +581,7 @@ $(function(){
             if ( penMode === "rubber" ){
                 rubber(x,y);
             } else if ( penMode === "pen" ){
+                submitDrawing.prop("disabled",false)
                 cxt.beginPath();
                 cxt.arc(x, y, cxt.lineWidth/1.5, 0, Math.PI*2, true);
                 cxt.closePath();
@@ -604,6 +610,7 @@ $(function(){
             }
         }).bind('panend', function(e) { // And mouseup
                 if ( penMode === "pen" ){
+                    submitDrawing.prop("disabled",false)
                     cxt.closePath();
                 }
             })
