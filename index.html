@@ -105,6 +105,15 @@
     </section>
 
     <section id="my-games-page" class="game-page" style="display: none">
+        <div id='game-type-select' class="btn-group" data-toggle="buttons">
+            <label class="btn btn-primary game-type-option active" id="finished-game">
+                <input type="radio" name="options">已完成的接力
+            </label>
+            <label class="btn btn-primary game-type-option" id="ongoing-game">
+                <input type="radio" name="options">进行中的接力
+            </label>
+        </div>
+        <div id="game-list"></div>
     </section>
 
     <section id="draw-page" class="game-page" style="display: none">
@@ -198,21 +207,19 @@
                 <div>
                     <label class="nickname"><%= nickname %></label>
                 </div>
+                <% if ( finish ) { %>
                 <div class="max-length">经过 <%= max %> 次接龙</div>
+                <% } else { %>
+                <label class="create-at">接力于 <%= relative_time_text(createdAt) %></label>
+                <% } %>
                 <div>
+                    <% if ( finish ) { %>
                     <label class="create-at">完成于 <%= relative_time_text(createdAt) %></label>
+                    <% } else { %>
+                    <label class="create-at">完成度 <%=currentPosition%>/<%=max%></label>
+                    <% } %>
                     <label class="difficulty-label difficulty-<%=difficulty%>">
-                        <% if (difficulty == 0) { %>
-                        自选题
-                        <% } else if (difficulty == 1) { %>
-                        难度：简单
-                        <% } else if (difficulty == 2) { %>
-                        难度：普通
-                        <% } else if (difficulty == 3) { %>
-                        难度：困难
-                        <% } else if (difficulty == 4) { %>
-                        难度：疯狂
-                        <% } %>
+                        <%= getDifficultyWording(difficulty) %>
                     </label>
                 </div>
             </span>

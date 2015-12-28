@@ -3,6 +3,21 @@ $(function(){
     var TYPE_WRITING = 1;
     var TYPE_QUESTION = 2;
 
+    window.getDifficultyWording=function(difficulty){
+        switch (difficulty) {
+            case 0:
+                return "自选题"
+            case 1:
+                return "难度：简单"
+            case 2:
+                return "难度：普通"
+            case 3:
+                return "难度：困难"
+            case 4:
+                return "难度：疯狂"
+        }
+    }
+
     AV.$ = jQuery;
 
     // Initialize AV with your AV application javascript keys
@@ -77,6 +92,7 @@ $(function(){
         var prevUsers = frame.get("prevUsers")
         if (frame.get("currentPosition") >= frame.get("max")) {
             //已经满了
+            setDataForWeixin("res/icon-big.png",window.location, "快来看"+frame.get("nickname")+"完成的画话接力","难度："+frame.get("difficulty"));
             showPage("view-page")
             notify("本次接力已经完成","normal")
             fetchAllPrevFrame();
@@ -88,17 +104,20 @@ $(function(){
                 } else {
                     notify("感谢您参与本次接力", "normal")
                 }
+                setDataForWeixin("res/icon-big.png",window.location, "快来猜猜"+frame.get("nickname")+"画的是神马","接力进度"+frame.get("currentPosition")+"/"+frame.get("max")+"  难度："+frame.get("difficulty"));
                 fetchAllPrevFrame();
             } else {
                 if (frame.get("typeId") == TYPE_QUESTION || frame.get("typeId") == TYPE_WRITING) {
                     if ( frame.get("typeId") == TYPE_QUESTION ) {
                         notify("请您根据题目在下面的画板作画", "normal")
                     } else notify("请您根据前人出的题目在下面的画板作画", "normal")
+                    setDataForWeixin("res/icon-big.png",window.location, "快来试试能否画出"+frame.get("nickname")+"出题的图","接力进度"+frame.get("currentPosition")+"/"+frame.get("max")+"  难度："+frame.get("difficulty"));
                     showPage("draw-page")
                     $("#draw-page .writing-block").html( writingTemplate(frame.toJSON()) );
                     enableCanvas();
                 } else {
                     clearNotify();
+                    setDataForWeixin("res/icon-big.png",window.location, "快来猜猜"+frame.get("nickname")+"画的是神马","接力进度"+frame.get("currentPosition")+"/"+frame.get("max")+"  难度："+frame.get("difficulty"));
                     showPage("write-page")
                     $("#write-page .drawing-block").empty();
                     renderFrame($("#write-page .drawing-block"), frame);
@@ -129,7 +148,7 @@ $(function(){
         clearNotify();
         $("#square-page").addClass("loading")
         var query = new AV.Query(Frame);
-        query.equalTo('finish', true).select("userId","nickname","headUrl","difficulty","max");
+        query.equalTo('finish', true).select("userId","nickname","headUrl","difficulty","max","finish");
         query.find({
             success: function (results) {
                 $("#square-page").empty();
@@ -153,18 +172,26 @@ $(function(){
         });
     }
 
+    $("#ongoing-game").click(function(){
+        window.location.hash = "my-ongoing-games";
+    });
+    $("#finished-game").click(function(){
+        window.location.hash = "my-finished-games";
+    });
+
+    var myGameList = $("#game-list");
     var fetchMyRecentFinishGame = function() {
         clearNotify();
-        $("#my-games-page").addClass("loading")
+        myGameList.addClass("loading")
         var query = new AV.Query(Frame);
-        query.equalTo('finish', true).equalTo('prevUsers', currentUser.nickname).select("userId","nickname","headUrl","difficulty","max"); //TODO change to userId
+        query.equalTo('finish', true).equalTo('prevUsers', currentUser.nickname).select("userId","nickname","headUrl","difficulty","max","finish"); //TODO change to userId
         query.find({
             success: function (results) {
-                $("#my-games-page").empty();
-                $("#my-games-page").removeClass("loading")
+                myGameList.empty();
+                myGameList.removeClass("loading")
                 if ( results.length ) {
                     _.each(results, function (frame) {
-                        $("#my-games-page").append(gameItemTemplate(frame.toJSON()));
+                        myGameList.append(gameItemTemplate(frame.toJSON()));
                     })
                     $(".game-item").click(function(){
                         currentFrame = null;
@@ -175,7 +202,35 @@ $(function(){
                 }
             },
             error: function (error) {
-                $("#my-games-page").removeClass("loading")
+                myGameList.removeClass("loading")
+                notify("获取数据失败", "danger")
+            }
+        });
+    }
+
+    var fetchMyRecentOngoingGame = function() {
+        clearNotify();
+        myGameList.addClass("loading")
+        var query = new AV.Query(Frame);
+        query.equalTo('needContinue', true).equalTo('prevUsers', currentUser.nickname).select("userId","nickname","headUrl","difficulty","max","finish","currentPosition"); //TODO change to userId
+        query.find({
+            success: function (results) {
+                myGameList.empty();
+                myGameList.removeClass("loading")
+                if ( results.length ) {
+                    _.each(results, function (frame) {
+                        myGameList.append(gameItemTemplate(frame.toJSON()));
+                    })
+                    $(".game-item").click(function(){
+                        currentFrame = null;
+                        window.location.hash = $(this).attr("id");
+                    });
+                } else {
+                    notify("还没有未完成的接力，等着你来出题哦","warning")
+                }
+            },
+            error: function (error) {
+                myGameList.removeClass("loading")
                 notify("获取数据失败", "danger")
             }
         });
@@ -227,11 +282,20 @@ $(function(){
                     $("#quare").addClass("active");
                     showPage("square-page")
                     fetchRecentFinishGame();
-                } else if ( hash == "my-games" ) {
+                } else if ( hash == "my-finished-games" ) {
                     allBottomBarButtons.removeClass("active");
                     $("#my-games").addClass("active");
                     showPage("my-games-page")
+                    $(".game-type-option").removeClass("active");
+                    $("#finished-game").addClass("active");
                     fetchMyRecentFinishGame();
+                } else if ( hash == "my-ongoing-games" ) {
+                    allBottomBarButtons.removeClass("active");
+                    $("#my-games").addClass("active");
+                    showPage("my-games-page")
+                    $(".game-type-option").removeClass("active");
+                    $("#ongoing-game").addClass("active");
+                    fetchMyRecentOngoingGame();
                 } else {
                     if ( !currentFrame ) {
                         var query = new AV.Query(Frame);
@@ -282,7 +346,7 @@ $(function(){
 
     $("#my-games").click(function(){
         shareMask.hide();
-        window.location.hash = "my-games";
+        window.location.hash = "my-finished-games";
     });
 
     $(".i-want-title").click(function(){

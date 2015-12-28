@@ -8,6 +8,7 @@
 
 .game-page {
     margin-top: 40px;
+    margin-bottom: 35px;
 }
 
 #login-page, #question-page {
@@ -101,6 +102,10 @@
     background-color: transparent;
 }
 
+#game-type-select {
+    margin:5px;
+}
+
 .frames {
     margin-bottom: 40px;
 }
@@ -143,4 +148,28 @@
     position: absolute;
     right: 5px;
     top: 5px;
+}
+
+.difficulty-label {
+    padding: 2px 5px;
+    border-radius: 5px;
+}
+.difficulty-0 {
+    border:1px solid #000000;
+}
+.difficulty-1 {
+    border:1px solid #000000;
+    background-color: lightgreen;
+}
+.difficulty-2 {
+    border:1px solid #000000;
+    background-color: lightblue;
+}
+.difficulty-3 {
+    border:1px solid #000000;
+    background-color: orange;
+}
+.difficulty-4 {
+    border:1px solid #000000;
+    background-color: lightcoral;
 }
