@@ -152,93 +152,41 @@ $(function(){
         });
     }
 
-    var fetchRecentFinishGame = function() {
-        clearNotify();
-        $("#square-page").addClass("loading")
-        var query = new AV.Query(Frame);
-        query.equalTo('finish', true).select("userId","nickname","headUrl","difficulty","max","finish");
-        query.find({
-            success: function (results) {
-                $("#square-page").empty();
-                $("#square-page").removeClass("loading")
-                if ( results.length ) {
-                    _.each(results, function (frame) {
-                        $("#square-page").append(gameItemTemplate(frame.toJSON()));
-                    })
-                    $(".game-item").click(function(){
-                        currentFrame = null;
-                        window.location.hash = $(this).attr("id");
-                    });
-                } else {
-                    notify("还没有完成的接力，等着你来完成哦","warning")
-                }
-            },
-            error: function (error) {
-                $("#square-page").removeClass("loading")
-                notify("获取数据失败", "danger")
-            }
-        });
-    }
 
-    $("#ongoing-game").click(function(){
+    $("#my-games-page .ongoing-game").click(function(){
         window.location.hash = "my-ongoing-games";
     });
-    $("#finished-game").click(function(){
+    $("#my-games-page .finished-game").click(function(){
         window.location.hash = "my-finished-games";
     });
+    $("#square-page .ongoing-game").click(function(){
+        window.location.hash = "all-ongoing-games";
+    });
+    $("#square-page .finished-game").click(function(){
+        window.location.hash = "all-finished-games";
+    });
 
-    var myGameList = $("#game-list");
-    var fetchMyRecentFinishGame = function() {
+    var fetchGameList = function(listEl, query, emptyHint) {
         clearNotify();
-        myGameList.addClass("loading")
-        var query = new AV.Query(Frame);
-        query.equalTo('finish', true).equalTo('prevUsers', currentUser.nickname).select("userId","nickname","headUrl","difficulty","max","finish"); //TODO change to userId
+        listEl.addClass("loading")
         query.find({
             success: function (results) {
-                myGameList.empty();
-                myGameList.removeClass("loading")
+                listEl.empty();
+                listEl.removeClass("loading")
                 if ( results.length ) {
                     _.each(results, function (frame) {
-                        myGameList.append(gameItemTemplate(frame.toJSON()));
+                        listEl.append(gameItemTemplate(frame.toJSON()));
                     })
-                    $(".game-item").click(function(){
+                    listEl.children(".game-item").click(function(){
                         currentFrame = null;
                         window.location.hash = $(this).attr("id");
                     });
                 } else {
-                    notify("还没有完成的接力，等着你来完成哦","warning")
+                    notify(emptyHint,"warning")
                 }
             },
             error: function (error) {
-                myGameList.removeClass("loading")
-                notify("获取数据失败", "danger")
-            }
-        });
-    }
-
-    var fetchMyRecentOngoingGame = function() {
-        clearNotify();
-        myGameList.addClass("loading")
-        var query = new AV.Query(Frame);
-        query.equalTo('needContinue', true).equalTo('prevUsers', currentUser.nickname).select("userId","nickname","headUrl","difficulty","max","finish","currentPosition"); //TODO change to userId
-        query.find({
-            success: function (results) {
-                myGameList.empty();
-                myGameList.removeClass("loading")
-                if ( results.length ) {
-                    _.each(results, function (frame) {
-                        myGameList.append(gameItemTemplate(frame.toJSON()));
-                    })
-                    $(".game-item").click(function(){
-                        currentFrame = null;
-                        window.location.hash = $(this).attr("id");
-                    });
-                } else {
-                    notify("还没有未完成的接力，等着你来出题哦","warning")
-                }
-            },
-            error: function (error) {
-                myGameList.removeClass("loading")
+                listEl.removeClass("loading")
                 notify("获取数据失败", "danger")
             }
         });
@@ -285,25 +233,40 @@ $(function(){
                     allBottomBarButtons.removeClass("active");
                     $("#i-want").addClass("active");
                     showPage("question-page")
-                } else if ( hash == "square" ) {
+                } else if ( hash == "all-finished-games" ) {
                     allBottomBarButtons.removeClass("active");
                     $("#quare").addClass("active");
                     showPage("square-page")
-                    fetchRecentFinishGame();
+                    $("#square-page .game-type-option").removeClass("active");
+                    $("#square-page .finished-game").addClass("active");
+                    var query = new AV.Query(Frame);
+                    query.equalTo('finish', true).select("userId","nickname","headUrl","difficulty","max","finish");
+                    fetchGameList($("#square-page .game-list"),query, "还没有完成的接力，等着你来完成哦" );
+                } else if ( hash == "all-ongoing-games" ) {
+                    allBottomBarButtons.removeClass("active");
+                    $("#quare").addClass("active");
+                    showPage("square-page")
+                    var query = new AV.Query(Frame);
+                    query.equalTo('needContinue', true).select("userId","nickname","headUrl","difficulty","max","finish","currentPosition");
+                    fetchGameList($("#square-page .game-list"),query, "还没有未完成的接力，等着你来出题哦" );
                 } else if ( hash == "my-finished-games" ) {
                     allBottomBarButtons.removeClass("active");
                     $("#my-games").addClass("active");
                     showPage("my-games-page")
-                    $(".game-type-option").removeClass("active");
-                    $("#finished-game").addClass("active");
-                    fetchMyRecentFinishGame();
+                    $("#my-games-pag .game-type-option").removeClass("active");
+                    $("#my-games-pag .finished-game").addClass("active");
+                    var query = new AV.Query(Frame);
+                    query.equalTo('finish', true).equalTo('prevUsers', currentUser.nickname).select("userId","nickname","headUrl","difficulty","max","finish"); //TODO change to userId
+                    fetchGameList($("#my-games-page .game-list"),query, "还没有完成的接力，等着你来完成哦" );
                 } else if ( hash == "my-ongoing-games" ) {
                     allBottomBarButtons.removeClass("active");
                     $("#my-games").addClass("active");
                     showPage("my-games-page")
-                    $(".game-type-option").removeClass("active");
-                    $("#ongoing-game").addClass("active");
-                    fetchMyRecentOngoingGame();
+                    $("#my-games-pag .game-type-option").removeClass("active");
+                    $("#my-games-pag .ongoing-game").addClass("active");
+                    var query = new AV.Query(Frame);
+                    query.equalTo('needContinue', true).equalTo('prevUsers', currentUser.nickname).select("userId","nickname","headUrl","difficulty","max","finish","currentPosition"); //TODO change to userId
+                    fetchGameList($("#my-games-page .game-list"),query, "还没有未完成的接力，等着你来出题哦" );
                 } else {
                     if ( !currentFrame ) {
                         var query = new AV.Query(Frame);
@@ -349,7 +312,7 @@ $(function(){
 
     $("#square").click(function(){
         shareMask.hide();
-        window.location.hash = "square";
+        window.location.hash = "all-finished-games";
     });
 
     $("#my-games").click(function(){

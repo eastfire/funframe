@@ -102,7 +102,7 @@
     background-color: transparent;
 }
 
-#game-type-select {
+.game-type-select {
     margin:5px;
 }
 
@@ -172,4 +172,18 @@
 .difficulty-4 {
     border:1px solid #000000;
     background-color: lightcoral;
+}
+
+.progress {
+    margin-left : 10px;
+    display: inline-block;
+}
+.progress-part {
+    margin-left: -10px;
+}
+.complete-part {
+    color: orangered;
+}
+.incomplete-part {
+    color: grey;
 }

@@ -102,18 +102,27 @@
     </section>
 
     <section id="square-page" class="game-page" style="display: none">
-    </section>
-
-    <section id="my-games-page" class="game-page" style="display: none">
-        <div id='game-type-select' class="btn-group" data-toggle="buttons">
-            <label class="btn btn-primary game-type-option active" id="finished-game">
+        <div class="btn-group game-type-select" data-toggle="buttons">
+            <label class="btn btn-primary game-type-option active finished-game square">
                 <input type="radio" name="options">已完成的接力
             </label>
-            <label class="btn btn-primary game-type-option" id="ongoing-game">
+            <label class="btn btn-primary game-type-option ongoing-game square">
                 <input type="radio" name="options">进行中的接力
             </label>
         </div>
-        <div id="game-list"></div>
+        <div class="game-list"></div>
+    </section>
+
+    <section id="my-games-page" class="game-page" style="display: none">
+        <div class="btn-group game-type-select" data-toggle="buttons">
+            <label class="btn btn-primary game-type-option active finished-game my">
+                <input type="radio" name="options">已完成的接力
+            </label>
+            <label class="btn btn-primary game-type-option ongoing-game my">
+                <input type="radio" name="options">进行中的接力
+            </label>
+        </div>
+        <div class="game-list"></div>
     </section>
 
     <section id="draw-page" class="game-page" style="display: none">
@@ -216,7 +225,15 @@
                     <% if ( finish ) { %>
                     <label class="create-at">完成于 <%= relative_time_text(createdAt) %></label>
                     <% } else { %>
-                    <label class="create-at">完成度 <%=currentPosition%>/<%=max%></label>
+                    <label class="create-at">完成度</label>
+                    <div class="progress">
+                        <% for ( i = 0 ; i < currentPosition ; i++ ) { %>
+                            <i class="iconfont icon-man progress-part complete-part"></i>
+                        <% } %>
+                        <% for ( i = currentPosition ; i < max; i++ ) { %>
+                        <i class="iconfont icon-man progress-part incomplete-part"></i>
+                        <% } %>
+                    </div>
                     <% } %>
                     <label class="difficulty-label difficulty-<%=difficulty%>">
                         <%= getDifficultyWording(difficulty) %>
