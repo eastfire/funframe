@@ -107,7 +107,9 @@ $(function(){
                 } else {
                     notify("感谢您参与本次接力", "normal")
                 }
-                var title = "快来猜猜"+frame.get("nickname")+"画的是神马？"
+                var title = (frame.get("typeId") == TYPE_QUESTION || frame.get("typeId") == TYPE_WRITING)?
+                    ("你能根据"+frame.get("nickname")+"出的题目画出给力的图来吗？"):
+                    ("快来猜猜"+frame.get("nickname")+"画的是神马？")
                 document.title = title+desc;
                 setDataForWeixin("res/icon-big.png",window.location, title,desc);
                 fetchAllPrevFrame();
