@@ -92,13 +92,14 @@ $(function(){
         var prevUsers = frame.get("prevUsers")
         if (frame.get("currentPosition") >= frame.get("max")) {
             //已经满了
-            var title = "快来看看"+frame.get("nickname")+"完成的画话接力"
+            var title = "快来看看"+frame.get("nickname")+"完成的有趣接力"
             document.title = title;
             setDataForWeixin("res/icon-big.png",window.location, title,"难度："+frame.get("difficulty"));
             showPage("view-page")
             notify("本次接力已经完成","normal")
             fetchAllPrevFrame();
         } else {
+            var desc = "还差"+(frame.get("max")-frame.get("currentPosition"))+"次接力就能完成哦"
             if (checkAlreadyJoined(frame)) {
                 showPage("view-page")
                 if ( frame.get("nickname") === currentUser.nickname ) { //TODO change nickname to userId
@@ -107,25 +108,25 @@ $(function(){
                     notify("感谢您参与本次接力", "normal")
                 }
                 var title = "快来猜猜"+frame.get("nickname")+"画的是神马？"
-                document.title = title;
-                setDataForWeixin("res/icon-big.png",window.location, title,"接力进度"+frame.get("currentPosition")+"/"+frame.get("max")+"  难度："+frame.get("difficulty"));
+                document.title = title+desc;
+                setDataForWeixin("res/icon-big.png",window.location, title,desc);
                 fetchAllPrevFrame();
             } else {
                 if (frame.get("typeId") == TYPE_QUESTION || frame.get("typeId") == TYPE_WRITING) {
                     if ( frame.get("typeId") == TYPE_QUESTION ) {
                         notify("请您根据题目在下面的画板作画", "normal")
                     } else notify("请您根据前人出的题目在下面的画板作画", "normal")
-                    var title = "你能根据"+frame.get("nickname")+"出的题画出图来吗？"
-                    document.title = title;
-                    setDataForWeixin("res/icon-big.png",window.location, title,"接力进度"+frame.get("currentPosition")+"/"+frame.get("max")+"  难度："+frame.get("difficulty"));
+                    var title = "你能根据"+frame.get("nickname")+"出的题目画出给力的图来吗？"
+                    document.title = title+desc;
+                    setDataForWeixin("res/icon-big.png",window.location, title,desc);
                     showPage("draw-page")
                     $("#draw-page .writing-block").html( writingTemplate(frame.toJSON()) );
                     enableCanvas();
                 } else {
                     clearNotify();
                     var title = "快来猜猜"+frame.get("nickname")+"画的是神马？"
-                    document.title = title;
-                    setDataForWeixin("res/icon-big.png",window.location, title,"接力进度"+frame.get("currentPosition")+"/"+frame.get("max")+"  难度："+frame.get("difficulty"));
+                    document.title = title+desc;
+                    setDataForWeixin("res/icon-big.png",window.location, title,desc);
                     showPage("write-page")
                     $("#write-page .drawing-block").empty();
                     renderFrame($("#write-page .drawing-block"), frame);
@@ -246,6 +247,8 @@ $(function(){
                     allBottomBarButtons.removeClass("active");
                     $("#quare").addClass("active");
                     showPage("square-page")
+                    $("#square-page .game-type-option").removeClass("active");
+                    $("#square-page .ongoing-game").addClass("active");
                     var query = new AV.Query(Frame);
                     query.equalTo('needContinue', true).select("userId","nickname","headUrl","difficulty","max","finish","currentPosition");
                     fetchGameList($("#square-page .game-list"),query, "还没有未完成的接力，等着你来出题哦" );
@@ -253,8 +256,8 @@ $(function(){
                     allBottomBarButtons.removeClass("active");
                     $("#my-games").addClass("active");
                     showPage("my-games-page")
-                    $("#my-games-pag .game-type-option").removeClass("active");
-                    $("#my-games-pag .finished-game").addClass("active");
+                    $("#my-games-page .game-type-option").removeClass("active");
+                    $("#my-games-page .finished-game").addClass("active");
                     var query = new AV.Query(Frame);
                     query.equalTo('finish', true).equalTo('prevUsers', currentUser.nickname).select("userId","nickname","headUrl","difficulty","max","finish"); //TODO change to userId
                     fetchGameList($("#my-games-page .game-list"),query, "还没有完成的接力，等着你来完成哦" );
@@ -262,8 +265,8 @@ $(function(){
                     allBottomBarButtons.removeClass("active");
                     $("#my-games").addClass("active");
                     showPage("my-games-page")
-                    $("#my-games-pag .game-type-option").removeClass("active");
-                    $("#my-games-pag .ongoing-game").addClass("active");
+                    $("#my-games-page .game-type-option").removeClass("active");
+                    $("#my-games-page .ongoing-game").addClass("active");
                     var query = new AV.Query(Frame);
                     query.equalTo('needContinue', true).equalTo('prevUsers', currentUser.nickname).select("userId","nickname","headUrl","difficulty","max","finish","currentPosition"); //TODO change to userId
                     fetchGameList($("#my-games-page .game-list"),query, "还没有未完成的接力，等着你来出题哦" );

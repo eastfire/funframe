@@ -5,4 +5,5 @@ public/android
 frameworks
 *.swp
 */*.swp
-
+node_modules
+npm-debug.log
