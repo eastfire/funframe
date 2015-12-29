@@ -92,7 +92,9 @@ $(function(){
         var prevUsers = frame.get("prevUsers")
         if (frame.get("currentPosition") >= frame.get("max")) {
             //已经满了
-            setDataForWeixin("res/icon-big.png",window.location, "快来看"+frame.get("nickname")+"完成的画话接力","难度："+frame.get("difficulty"));
+            var title = "快来看看"+frame.get("nickname")+"完成的画话接力"
+            document.title = title;
+            setDataForWeixin("res/icon-big.png",window.location, title,"难度："+frame.get("difficulty"));
             showPage("view-page")
             notify("本次接力已经完成","normal")
             fetchAllPrevFrame();
@@ -104,20 +106,26 @@ $(function(){
                 } else {
                     notify("感谢您参与本次接力", "normal")
                 }
-                setDataForWeixin("res/icon-big.png",window.location, "快来猜猜"+frame.get("nickname")+"画的是神马","接力进度"+frame.get("currentPosition")+"/"+frame.get("max")+"  难度："+frame.get("difficulty"));
+                var title = "快来猜猜"+frame.get("nickname")+"画的是神马？"
+                document.title = title;
+                setDataForWeixin("res/icon-big.png",window.location, title,"接力进度"+frame.get("currentPosition")+"/"+frame.get("max")+"  难度："+frame.get("difficulty"));
                 fetchAllPrevFrame();
             } else {
                 if (frame.get("typeId") == TYPE_QUESTION || frame.get("typeId") == TYPE_WRITING) {
                     if ( frame.get("typeId") == TYPE_QUESTION ) {
                         notify("请您根据题目在下面的画板作画", "normal")
                     } else notify("请您根据前人出的题目在下面的画板作画", "normal")
-                    setDataForWeixin("res/icon-big.png",window.location, "快来试试能否画出"+frame.get("nickname")+"出题的图","接力进度"+frame.get("currentPosition")+"/"+frame.get("max")+"  难度："+frame.get("difficulty"));
+                    var title = "你能根据"+frame.get("nickname")+"出的题画出图来吗？"
+                    document.title = title;
+                    setDataForWeixin("res/icon-big.png",window.location, title,"接力进度"+frame.get("currentPosition")+"/"+frame.get("max")+"  难度："+frame.get("difficulty"));
                     showPage("draw-page")
                     $("#draw-page .writing-block").html( writingTemplate(frame.toJSON()) );
                     enableCanvas();
                 } else {
                     clearNotify();
-                    setDataForWeixin("res/icon-big.png",window.location, "快来猜猜"+frame.get("nickname")+"画的是神马","接力进度"+frame.get("currentPosition")+"/"+frame.get("max")+"  难度："+frame.get("difficulty"));
+                    var title = "快来猜猜"+frame.get("nickname")+"画的是神马？"
+                    document.title = title;
+                    setDataForWeixin("res/icon-big.png",window.location, title,"接力进度"+frame.get("currentPosition")+"/"+frame.get("max")+"  难度："+frame.get("difficulty"));
                     showPage("write-page")
                     $("#write-page .drawing-block").empty();
                     renderFrame($("#write-page .drawing-block"), frame);
