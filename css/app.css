@@ -11,6 +11,17 @@
     margin-bottom: 35px;
 }
 
+#login-dialog {
+    background-color: rgba(225, 225, 225, 0.9);
+    bottom: 0;
+    left: 0;
+    padding: 100px 10px;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 100;
+}
+
 #login-page, #question-page {
     padding: 10px;
 }
@@ -26,6 +37,10 @@
 .loading:before {
     content:url(../res/loading.gif);
     background-size:contain;
+}
+
+.ask-i-want-in-block {
+    padding: 0px 20px;
 }
 
 .i-want-title {

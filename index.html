@@ -12,14 +12,7 @@
 
 </head>
 <body>
-    <section id="login-page" class="game-page" style="display: none">
-        <div class="input-group">
-            <span class="input-group-addon  iconfont icon-account"></span>
-            <input type="text" class="form-control" placeholder="昵称" id='user-name'/>
-        </div>
-        <div class="login-hint">本系统没有用户系统，请任意输入昵称即可</div>
-        <button type="button" class="btn btn-primary" id='login'>登录</button>
-    </section>
+
     
     <!--<script src="js/vendor/jquery-2.1.1.min.js"></script>-->
     <!--<script src="js/vendor/underscore-min.js"></script>-->
@@ -29,7 +22,7 @@
     <!--<script src="js/questions.js"></script>-->
     <!--<script src="js/utils.js"></script>-->
     <!--<script src="js/app.js"></script>-->
-    <script src="publish/js/all.min.js"></script>
+    <script src="publish/js/all.js"></script>
     
     <script>
     	$(function(){
@@ -87,6 +80,9 @@
                 <button type="button" class="btn btn-default i-want-btn" id='i-want-draw-or-write'>我要画图或猜图</button>
             </div>
         </div>
+        <div class="i-want-block">
+            <label id="change-nickname" class="i-want-title">更改昵称 &gt;</label>
+        </div>
     </section>
 
 
@@ -95,7 +91,11 @@
         </div>
 		<span>
 			<div><label>猜猜这是神马？</label></div>
-			<div>
+            <div class="ask-i-want-in-block" style="display: none">
+                <button class="btn btn-primary i-want-in">我来猜猜看</button>
+                <button class="btn btn-default goto-square">先去广场逛逛</button>
+            </div>
+			<div class="i-want-in-block" style="display: none">
                 <input id='writing-input' placeholder="我猜是？"/>
 			    <button id='submit-writing' class='btn btn-primary' type='button'>确定</button>
             </div>
@@ -137,7 +137,11 @@
         <div>
             <div class="writing-block">
             </div>
-            <div id="canvas-block" style=''>
+            <div class="ask-i-want-in-block" style="display: none">
+                <button class="btn btn-primary i-want-in">我来画画看</button>
+                <button class="btn btn-default goto-square">先去广场逛逛</button>
+            </div>
+            <div id="canvas-block" class="i-want-in-block" style='display: none'>
                 <canvas id='drawing-canvas' width='500' height='500' style=''>
                 </canvas>
                 <div id='canvas-bar'>
@@ -174,6 +178,17 @@
         <div type="button" id="square" class="bottom-bar-btn btn btn-default">广场</div>
         <div type="button" id="my-games" class="bottom-bar-btn btn btn-default">我的接力</div>
     </div>
+
+    <script type="text/template" id="login-template">
+        <div id="login-dialog">
+            <div class="input-group">
+                <span class="input-group-addon  iconfont icon-account"></span>
+                <input type="text" class="form-control" placeholder="昵称" id='user-name'/>
+            </div>
+            <div class="login-hint">本系统没有用户系统，请任意输入昵称即可</div>
+            <button type="button" class="btn btn-primary" id='login'>确定</button>
+        </div>
+    </script>
 
     <script type="text/template" id="drawing-template">
         <div class="drawing">

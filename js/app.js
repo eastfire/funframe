@@ -24,9 +24,11 @@ $(function(){
     AV.initialize("nGzLz4BMHo2MMjvPHDGYEhX0-gzGzoHsz",
         "5bcee0UaYmb5rIvmxReHDV3a");
 
+    var loginTemplate = _.template($("#login-template").html())
     var writingTemplate = _.template($("#writing-template").html())
     var drawingTemplate = _.template($("#drawing-template").html())
     var gameItemTemplate = _.template($("#game-item-template").html())
+
     var screenWidth = Math.min( $(window).width(), 600);
 
     var Frame = AV.Object.extend("Frame", {
@@ -52,7 +54,7 @@ $(function(){
     var showPage = function(page) {
         $(".game-page").hide();
         $("#"+page).show();
-        if ( page === "draw-page" || page === "write-page" || page === "login-page" ) {
+        if ( page === "draw-page" || page === "write-page" ) {
             $("#bottom-bar").hide();
         } else $("#bottom-bar").show();
     }
@@ -61,22 +63,50 @@ $(function(){
     showPage("login-page")
     var store = localStorage.getItem("funframe.nickname");
     if ( store ) {
-        $("#user-name").val(store)
-    }
-    $("#login").on("click",function(){
-        var nickname = $("#user-name").val().trim();
-        if ( nickname !== "" ) {
-            currentUser = {
-                nickname: nickname,
-                headUrl: null,
-                userId: 0
-            };
-            localStorage.setItem("funframe.nickname", nickname);
-            jumpByHash();
+        currentUser = {
+            nickname: store,
+            headUrl: null,
+            userId: 0
         }
-    });
+    }
+
+    var isAuth = function(){
+        return currentUser;
+    }
+
+    var checkAuth = function(){
+        if ( !currentUser ) {
+            showLogin();
+        }
+    }
+
+    var showLogin = function(){
+        $("body").append(loginTemplate())
+        if ( isAuth() ) {
+            $("#user-name").val(currentUser.nickname)
+        }
+
+        $("#login").on("click",function(){
+            var nickname = $("#user-name").val().trim();
+            if ( nickname !== "" ) {
+                currentUser = {
+                    nickname: nickname,
+                    headUrl: null,
+                    userId: 0
+                };
+                localStorage.setItem("funframe.nickname", nickname);
+                hideLogin();
+                location.reload()
+            }
+        });
+    }
+    var hideLogin = function(){
+        $("#login-dialog").remove();
+    }
+
 
     var checkAlreadyJoined = function(frame) {
+        if ( !isAuth() ) return false;
         if ( frame.get("typeId") === TYPE_QUESTION ) {
             return false;
         }
@@ -123,6 +153,13 @@ $(function(){
                     setDataForWeixin("res/icon-big.png",window.location, title,desc);
                     showPage("draw-page")
                     $("#draw-page .writing-block").html( writingTemplate(frame.toJSON()) );
+                    if ( isAuth() ) {
+                        $(".ask-i-want-in-block").hide();
+                        $(".i-want-in-block").show();
+                    } else {
+                        $(".ask-i-want-in-block").show();
+                        $(".i-want-in-block").hide();
+                    }
                     enableCanvas();
                 } else {
                     clearNotify();
@@ -132,6 +169,13 @@ $(function(){
                     showPage("write-page")
                     $("#write-page .drawing-block").empty();
                     renderFrame($("#write-page .drawing-block"), frame);
+                    if ( isAuth() ) {
+                        $(".ask-i-want-in-block").hide();
+                        $(".i-want-in-block").show();
+                    } else {
+                        $(".ask-i-want-in-block").show();
+                        $(".i-want-in-block").hide();
+                    }
                     writingInput.val("");
                 }
             }
@@ -226,13 +270,14 @@ $(function(){
     }
 
     var allBottomBarButtons = $(".bottom-bar-btn")
-    var DEFAULT_HASH = "question";
+    var DEFAULT_HASH = "all-finished-games";
     var jumpByHash = function(){
         var hash = window.location.hash;
         if ( hash ) {
             hash = hash.substr(1);
             if ( hash != "" ) {
                 if ( hash == "question" ) {
+                    checkAuth();
                     allBottomBarButtons.removeClass("active");
                     $("#i-want").addClass("active");
                     showPage("question-page")
@@ -270,6 +315,7 @@ $(function(){
                         .addDescending('createdAt');
                     fetchGameList($("#my-games-page .game-list"),query, "还没有完成的接力，等着你来完成哦" );
                 } else if ( hash == "my-ongoing-games" ) {
+                    checkAuth();
                     allBottomBarButtons.removeClass("active");
                     $("#my-games").addClass("active");
                     showPage("my-games-page")
@@ -306,6 +352,7 @@ $(function(){
     }
     $(window).on("hashchange",jumpByHash)
 
+    jumpByHash();
 
     var shareMask = $("#share-mask");
     shareMask.click(function(){
@@ -336,6 +383,9 @@ $(function(){
     $(".i-want-title").click(function(){
         $(".i-want-block-content").hide();
         $(this).siblings(".i-want-block-content").show();
+    })
+    $("#change-nickname").click(function(){
+        showLogin();
     })
 
     var submitQuestion = $("#submit-question");
@@ -383,6 +433,16 @@ $(function(){
             }
         });
     });
+
+    $(".i-want-in").click(function(){
+        $(".ask-i-want-in-block").hide();
+        showLogin();
+        $(".i-want-in-block").show();
+    })
+    $(".goto-square").click(function(){
+        $(".ask-i-want-in-block").hide();
+        window.location.hash = "all-finished-games";
+    })
 
     var allIWantBtn = $(".i-want-btn")
     var iWantDraw = $("#i-want-draw")
