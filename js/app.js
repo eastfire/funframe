@@ -683,8 +683,7 @@ $(function(){
             cxt.clearRect(x-20,y-20,41,41);
         }
         canvas.hammer().bind("tap",function(e){
-            e.preventDefault();
-            e.stopPropagation();
+            e.gesture.srcEvent.preventDefault();
             var x = (e.gesture.center.x - canvas.position().left)*ratio;
             var y = (e.gesture.center.y - canvas.position().top)*ratio;
 
@@ -698,8 +697,7 @@ $(function(){
                 cxt.fill();
             }
         }).bind('panstart', function(e) { // And mousedown
-            e.preventDefault();
-            e.stopPropagation();
+            e.gesture.srcEvent.preventDefault();
             var x = (e.gesture.center.x - canvas.position().left)*ratio;
             var y = (e.gesture.center.y - canvas.position().top)*ratio;
 
@@ -711,8 +709,7 @@ $(function(){
                 cxt.stroke();
             }
         }).bind('panmove', function(e) { // And mousemove when mousedown
-            e.preventDefault();
-            e.stopPropagation();
+            e.gesture.srcEvent.preventDefault();
             var x = (e.gesture.center.x - canvas.position().left)*ratio;
             var y = (e.gesture.center.y - canvas.position().top)*ratio;
 
@@ -723,8 +720,7 @@ $(function(){
                 cxt.stroke();
             }
         }).bind('panend', function(e) { // And mouseup
-            e.preventDefault();
-            e.stopPropagation();
+            e.gesture.srcEvent.preventDefault();
                 if ( penMode === "pen" ){
                     submitDrawing.prop("disabled",false)
                     cxt.closePath();
