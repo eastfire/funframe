@@ -684,6 +684,7 @@ $(function(){
         }
         canvas.hammer().bind("tap",function(e){
             e.gesture.srcEvent.preventDefault();
+            e.gesture.srcEvent.stopPropagation();
             var x = (e.gesture.center.x - canvas.position().left)*ratio;
             var y = (e.gesture.center.y - canvas.position().top)*ratio;
 
@@ -698,6 +699,7 @@ $(function(){
             }
         }).bind('panstart', function(e) { // And mousedown
             e.gesture.srcEvent.preventDefault();
+            e.gesture.srcEvent.stopPropagation();
             var x = (e.gesture.center.x - canvas.position().left)*ratio;
             var y = (e.gesture.center.y - canvas.position().top)*ratio;
 
@@ -710,6 +712,7 @@ $(function(){
             }
         }).bind('panmove', function(e) { // And mousemove when mousedown
             e.gesture.srcEvent.preventDefault();
+            e.gesture.srcEvent.stopPropagation();
             var x = (e.gesture.center.x - canvas.position().left)*ratio;
             var y = (e.gesture.center.y - canvas.position().top)*ratio;
 
@@ -721,6 +724,7 @@ $(function(){
             }
         }).bind('panend', function(e) { // And mouseup
             e.gesture.srcEvent.preventDefault();
+            e.gesture.srcEvent.stopPropagation();
                 if ( penMode === "pen" ){
                     submitDrawing.prop("disabled",false)
                     cxt.closePath();
