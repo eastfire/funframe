@@ -1008,11 +1008,11 @@ $(function(){
             }
         }).bind('panend', function(e) { // And mouseup
             e.gesture.srcEvent.preventDefault();
-                if ( penMode === "pen" ){
-                    submitDrawing.prop("disabled",false)
-                    cxt.closePath();
-                }
-            })
+            if ( penMode === "pen" ){
+                submitDrawing.prop("disabled",false)
+                cxt.closePath();
+            }
+        })
         canvas.data("hammer").get('pan').set({ direction: Hammer.DIRECTION_ALL });
     }
 });
