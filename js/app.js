@@ -682,7 +682,69 @@ $(function(){
         var rubber = function(x,y) {
             cxt.clearRect(x-20,y-20,41,41);
         }
+
+        /*function createHandler(event) {
+            return {
+                isHandled: false,
+                _shouldStopPropagation: false,
+                _shoulePreventDefault: false,
+                stopPropagation: event.stopPropagation.bind(event),
+                preventDefault: event.preventDefault.bind(event),
+            }
+        }
+
+        function handleEvent(handler, node) {
+            var clickHandler;
+
+            if (!handler.isHandled) {
+                handler.isHandled = true;
+                document.addEventListener('click', clickHandler = function (event) {
+                    if (handler._shouldStopPropagation) {
+                        handler.stopPropagation();
+                        event.stopPropagation();
+                    }
+                    if (handler._shoulePreventDefault) {
+                        handler.preventDefault();
+                        event.preventDefault();
+                    }
+                    document.removeEventListener('click', clickHandler, true);
+                }, true);
+            }
+        }
+
+        document.addEventListener('tap', function(event) {
+            var handler = createHandler(event);
+
+            event.stopPropagation = function() {
+                handler._shouldStopPropagation = true;
+                handleEvent(handler);
+            };
+            event.preventDefault  = function() {
+                handler._shoulePreventDefault = true;
+                handleEvent(handler);
+            }
+        }, true);
+
+        // Now we can use it.
+        document.addEventListener('tap', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        });
+        document.addEventListener('panstart', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        });
+        document.addEventListener('panmove', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        });
+        document.addEventListener('panend', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        });*/
+
         canvas.hammer().bind("tap",function(e){
+            e.gesture.srcEvent.preventDefault();
             var x = (e.gesture.center.x - canvas.position().left)*ratio;
             var y = (e.gesture.center.y - canvas.position().top)*ratio;
 
@@ -696,6 +758,7 @@ $(function(){
                 cxt.fill();
             }
         }).bind('panstart', function(e) { // And mousedown
+            e.gesture.srcEvent.preventDefault();
             var x = (e.gesture.center.x - canvas.position().left)*ratio;
             var y = (e.gesture.center.y - canvas.position().top)*ratio;
 
@@ -707,6 +770,7 @@ $(function(){
                 cxt.stroke();
             }
         }).bind('panmove', function(e) { // And mousemove when mousedown
+            e.gesture.srcEvent.preventDefault();
             var x = (e.gesture.center.x - canvas.position().left)*ratio;
             var y = (e.gesture.center.y - canvas.position().top)*ratio;
 
@@ -717,11 +781,12 @@ $(function(){
                 cxt.stroke();
             }
         }).bind('panend', function(e) { // And mouseup
-                if ( penMode === "pen" ){
-                    submitDrawing.prop("disabled",false)
-                    cxt.closePath();
-                }
-            })
+            e.gesture.srcEvent.preventDefault();
+            if ( penMode === "pen" ){
+                submitDrawing.prop("disabled",false)
+                cxt.closePath();
+            }
+        })
         canvas.data("hammer").get('pan').set({ direction: Hammer.DIRECTION_ALL });
     }
 });
